@@ -70,6 +70,8 @@ jobs:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       # A pull request builds and stops there, so a broken Dockerfile fails before merge.
+      - name: Name the published image
+        run: echo "IMAGE=$(echo "${GITHUB_REPOSITORY}" | tr '[:upper:]' '[:lower:]')" >>"${GITHUB_ENV}"
       - name: Run docker/build-push-action
         uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7
         with:
@@ -77,8 +79,8 @@ jobs:
           file: ./Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
-            ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.IMAGE_NAME }}:${{ env.VERSION }}
-            ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.IMAGE_NAME }}:latest
+            ${{ env.IMAGE }}:${{ env.VERSION }}
+            ${{ env.IMAGE }}:latest
       # Published before the pin moves, so the pin never names an image that is not there.
       - name: Update the image version
         if: github.event_name != 'pull_request'

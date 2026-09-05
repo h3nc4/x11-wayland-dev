@@ -36,6 +36,8 @@ jobs:
     steps:
       - name: Run actions/checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Name the published image
+        run: echo "IMAGE_REPO=$(echo "${GITHUB_REPOSITORY}" | tr '[:upper:]' '[:lower:]')" >>"${GITHUB_ENV}"
       - id: read_tag
         run: echo "tag=$(cat .github/VERSION)" >>"${GITHUB_OUTPUT}"
       - name: Run docker/login-action
@@ -47,7 +49,7 @@ jobs:
       # supply-chain problem for all of them at once.
       - name: Scan the published image
         env:
-          IMAGE: ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.IMAGE_NAME }}:${{ steps.read_tag.outputs.tag }}
+          IMAGE: ${{ env.IMAGE_REPO }}:${{ steps.read_tag.outputs.tag }}
         run: |
           docker run --rm \
             -v /var/run/docker.sock:/var/run/docker.sock \
