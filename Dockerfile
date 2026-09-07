@@ -18,7 +18,7 @@
 # One toolchain for dwm, st, dmenu, sxac and dwl, so each of those repositories pins
 # one tag instead of keeping its own apt list.
 
-FROM debian:trixie-slim@sha256:d7e12182ce18b85b93007c1dedf31f2d29e01ccf3182cc4017c709b6259bc132
+FROM debian:sid-slim@sha256:17d1843dae9ca66f1617c1e464f40d06059ccefb0c606e8b54687f253af1684e
 
 ARG USER="dev"
 ARG UID="1000"
@@ -53,13 +53,13 @@ RUN apt-get install --no-install-recommends -y -qq \
   libxkbfile-dev \
   libxtst-dev
 
-# Wayland, for dwl. The wlroots version is the constraint on the Debian base above:
-# trixie carries 0.18, which is what dwl 0.7 builds against.
+# Wayland, for dwl. The wlroots version is the constraint on the Debian base above: dwl 0.8
+# needs wlroots-0.19, which only sid carries, since trixie stopped at 0.18 and forky is on 0.20.
 RUN apt-get install --no-install-recommends -y -qq \
   libfcft-dev \
   libinput-dev \
   libwayland-dev \
-  libwlroots-0.18-dev \
+  libwlroots-0.19-dev \
   libxcb-icccm4-dev \
   libxcb1-dev \
   libxkbcommon-dev \
@@ -70,9 +70,10 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/* /var/log/* /tmp/*
 
 # For the dev container's interactive shell. CI runs as root, and a one-shot
 # `docker run` should pass --user so build output is not left root-owned.
-RUN addgroup --gid "${GID}" "${USER}" && \
-  adduser --uid "${UID}" --gid "${GID}" \
-  --shell "/bin/bash" --disabled-password "${USER}"
+# sid-slim ships no adduser, so these come from passwd instead.
+RUN groupadd --gid "${GID}" "${USER}" && \
+  useradd --uid "${UID}" --gid "${GID}" \
+  --shell "/bin/bash" --create-home "${USER}"
 
 # A bind-mounted tree owned by another uid is refused otherwise.
 RUN git config --system --add safe.directory '*'
