@@ -18,7 +18,7 @@
 # One toolchain for dwm, st, dmenu, sxac and dwl, so each of those repositories pins
 # one tag instead of keeping its own apt list.
 
-FROM debian:sid-slim@sha256:1f11c32b03195c1b28c55e4579755659edae5c76dd76a69b4e4fb34c58fa8744
+FROM debian:sid-slim@sha256:fb75970a5ba2a81ca409ed0cabcf05d53e058086fd397f7a63943ded5bd15f84
 
 ARG USER="dev"
 ARG UID="1000"
