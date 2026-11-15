@@ -81,6 +81,8 @@ jobs:
           tags: |
             ${{ env.IMAGE }}:${{ env.VERSION }}
             ${{ env.IMAGE }}:latest
+        env:
+          DOCKER_BUILD_RECORD_UPLOAD: false
       # Published before the pin moves, so the pin never names an image that is not there.
       - name: Update the image version
         if: github.event_name != 'pull_request'
