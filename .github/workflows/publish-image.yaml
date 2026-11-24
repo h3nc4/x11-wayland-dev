@@ -31,7 +31,7 @@ on:
       - "deps"
     paths:
       - "Dockerfile"
-      - ".github/workflows/publish-image.yaml"
+      - ".github/workflows/**"
   workflow_dispatch:
 
 concurrency:
